@@ -9,115 +9,170 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📘</text></svg>">
 </head>
 <body>
-<header class="top"><div class="wrap"><span class="logo">📘 Muse 注册教程</span><a href="#buy" class="btn small">立即购买</a></div></header>
+<header class="top"><div class="wrap">
+  <span class="logo" data-i18n="logo">📘 Muse 注册教程</span>
+  <nav class="nav">
+    <a href="#lookup" class="navlink" data-i18n="nav.lookup">查询订单</a>
+    <button type="button" id="langBtn" class="lang-btn" data-i18n="nav.lang" data-i18n-title="nav.langTitle">EN</button>
+    <a href="#buy" class="btn small" data-i18n="nav.buy">立即购买</a>
+  </nav>
+</div></header>
 
 <main class="wrap">
   <section class="hero card">
     <div class="hero-text">
-      <span class="tag">独立教程 · 邮箱发货</span>
-      <h1>Muse 注册教程</h1>
-      <p class="lead">从零开始，一步一步带你完成 Muse 的注册。步骤清晰、图文对照，新手也能照着做。</p>
+      <span class="tag" data-i18n="hero.tag">独立教程 · 邮箱发货</span>
+      <h1 data-i18n="hero.title">Muse 注册教程</h1>
+      <p class="lead" data-i18n="hero.lead">从零开始，一步一步带你完成 Muse 的注册。步骤清晰、图文对照，新手也能照着做。</p>
       <ul class="points">
-        <li>✅ 完整注册流程，按步骤讲清楚</li>
-        <li>✅ 注册中常见问题的处理思路</li>
-        <li>✅ 注册完成后的基础设置建议</li>
+        <li data-i18n="hero.p1">✅ 完整注册流程，按步骤讲清楚</li>
+        <li data-i18n="hero.p2">✅ 注册中常见问题的处理思路</li>
+        <li data-i18n="hero.p3">✅ 注册完成后的基础设置建议</li>
       </ul>
-      <div class="price-row"><span class="price">¥9.99</span><span class="muted">数字教程 · 邮箱发送</span></div>
+      <div class="price-row"><span class="price">¥9.99</span><span class="muted" data-i18n="hero.priceNote">数字教程 · 邮箱发送</span></div>
     </div>
   </section>
 
   <section id="buy" class="card">
-    <h2>购买步骤</h2>
+    <h2 data-i18n="buy.title">购买步骤</h2>
     <ol class="steps" id="stepsUsdt">
-      <li><b>转账</b>：用支持 BNB Smart Chain 的钱包，向下方地址转入 <b class="amt-inline">…</b> USDT（BEP20）。</li>
-      <li><b>提交订单</b>：填写你的邮箱和转账的交易哈希（Tx Hash）。</li>
-      <li><b>收货</b>：确认到账后，教程会发送到你的邮箱。</li>
+      <li data-i18n-html="usdt.s1"><b>转账</b>：用支持 BNB Smart Chain 的钱包，向下方地址转入 <b class="amt-inline">…</b> USDT（BEP20）。</li>
+      <li data-i18n-html="usdt.s2"><b>提交订单</b>：填写你的邮箱和转账的交易哈希（Tx Hash）。</li>
+      <li data-i18n-html="usdt.s3"><b>收货</b>：确认到账后，教程会发送到你的邮箱。</li>
     </ol>
     <ol class="steps hidden" id="stepsAlipay">
-      <li><b>扫码付款</b>：用支付宝扫描下方二维码，支付 <b>¥9.99</b>。</li>
-      <li><b>提交订单</b>：填写你的邮箱，并备注付款人昵称或支付宝订单号后几位，方便核对。</li>
-      <li><b>收货</b>：确认到账后，教程会发送到你的邮箱。</li>
+      <li data-i18n-html="ali.s1"><b>扫码付款</b>：用支付宝扫描下方二维码，支付 <b>¥9.99</b>。</li>
+      <li data-i18n-html="ali.s2"><b>提交订单</b>：填写你的邮箱，并备注付款人昵称或支付宝订单号后几位，方便核对。</li>
+      <li data-i18n-html="ali.s3"><b>收货</b>：确认到账后，教程会发送到你的邮箱。</li>
     </ol>
 
-    <div class="method-tabs" role="tablist" aria-label="支付方式">
-      <button type="button" class="method active" data-method="alipay" role="tab" aria-selected="true">支付宝</button>
-      <button type="button" class="method" data-method="usdt" role="tab" aria-selected="false">USDT（币安链）</button>
+    <div class="method-tabs" role="tablist" aria-label="支付方式" data-i18n-aria="tabs.label">
+      <button type="button" class="method active" data-method="alipay" role="tab" aria-selected="true" data-i18n="tab.alipay">支付宝</button>
+      <button type="button" class="method" data-method="usdt" role="tab" aria-selected="false" data-i18n="tab.usdt">USDT（币安链）</button>
     </div>
 
     <div id="payAlipay" class="pay-panel">
       <div class="alipay-box">
-        <div class="net"><span class="chip alipay">支付宝</span><span class="chip">¥9.99</span><span class="chip">666商店</span></div>
-        <img class="alipay-qr" src="assets/alipay-qr.jpg" alt="支付宝收款二维码 · 666商店" width="320" height="315">
-        <p class="muted small">请用支付宝扫一扫支付 <b>¥9.99</b>。付款后回到本页提交订单。</p>
+        <div class="net"><span class="chip alipay" data-i18n="chip.alipay">支付宝</span><span class="chip">¥9.99</span><span class="chip" data-i18n="chip.shop">666商店</span></div>
+        <img class="alipay-qr" src="assets/alipay-qr.jpg" alt="支付宝收款二维码 · 666商店" data-i18n-alt="ali.qrAlt" width="320" height="315">
+        <p class="muted small" data-i18n-html="ali.hint">请用支付宝扫一扫支付 <b>¥9.99</b>。付款后回到本页提交订单。</p>
       </div>
-      <div class="warn">
-        ⚠️ 请按金额 <b>¥9.99</b> 付款。提交订单时请填写支付宝昵称或订单号后几位，方便我们核对到账。
-      </div>
+      <div class="warn" data-i18n-html="ali.warn">⚠️ 请按金额 <b>¥9.99</b> 付款。提交订单时请填写支付宝昵称或订单号后几位，方便我们核对到账。</div>
     </div>
 
     <div id="payUsdt" class="pay-panel hidden">
       <div class="pay">
         <div class="amount-box">
-          <div class="muted">应付金额</div>
+          <div class="muted" data-i18n="usdt.due">应付金额</div>
           <div class="amount"><span id="usdt">…</span> <small>USDT</small></div>
-          <div class="muted small" id="rateNote">正在获取实时汇率…</div>
+          <div class="muted small" id="rateNote" data-i18n="usdt.rateLoading">正在获取实时汇率…</div>
         </div>
         <div class="addr-box">
           <div class="net"><span class="chip">USDT</span><span class="chip bsc">BNB Smart Chain (BEP20)</span></div>
-          <div id="qr" class="qr" aria-label="收款地址二维码"></div>
+          <div id="qr" class="qr" aria-label="收款地址二维码" data-i18n-aria="usdt.qrLabel"></div>
           <div class="addr"><code id="addr"></code></div>
-          <button id="copyBtn" class="btn">复制地址</button>
+          <button id="copyBtn" class="btn" data-i18n="usdt.copy">复制地址</button>
           <span id="copyMsg" class="copy-msg" role="status"></span>
         </div>
       </div>
-      <div class="warn">
-        ⚠️ <b>只支持 USDT（BEP20 / BSC 链）</b>。请勿通过以太坊 ERC20、波场 TRC20 等其他网络转账，也不要转入其他币种，否则资金将无法找回。转账前请仔细核对地址。
-      </div>
+      <div class="warn" data-i18n-html="usdt.warn">⚠️ <b>只支持 USDT（BEP20 / BSC 链）</b>。请勿通过以太坊 ERC20、波场 TRC20 等其他网络转账，也不要转入其他币种，否则资金将无法找回。转账前请仔细核对地址。</div>
     </div>
   </section>
 
   <section id="order" class="card">
-    <h2>提交订单</h2>
+    <h2 data-i18n="order.title">提交订单</h2>
     <form id="orderForm" novalidate>
-      <label>你的邮箱 <span class="req">*</span>
-        <input type="email" id="email" required placeholder="name@example.com" autocomplete="email">
+      <label><span data-i18n="f.email">你的邮箱</span> <span class="req">*</span>
+        <input type="email" id="email" required placeholder="name@example.com" data-i18n-ph="f.emailPh" autocomplete="email">
       </label>
-      <label id="txLabel">交易哈希 Tx Hash <span class="req">*</span>
-        <input type="text" id="tx" required placeholder="0x 开头，共 66 位" autocomplete="off" spellcheck="false">
-        <span class="hint">在钱包的转账记录里可以找到，或在 bscscan.com 查询。</span>
+      <label id="txLabel"><span data-i18n="f.tx">交易哈希 Tx Hash</span> <span class="req">*</span>
+        <input type="text" id="tx" required placeholder="0x 开头，共 66 位" data-i18n-ph="f.txPh" autocomplete="off" spellcheck="false">
+        <span class="hint" data-i18n="f.txHint">在钱包的转账记录里可以找到，或在 bscscan.com 查询。</span>
       </label>
-      <label id="alipayNoteLabel" class="hidden">支付宝付款信息 <span class="req">*</span>
-        <input type="text" id="alipayInfo" placeholder="支付宝昵称，或订单号后 6 位" autocomplete="off" maxlength="80">
-        <span class="hint">用于人工核对到账，请务必填写。</span>
+      <label id="alipayNoteLabel" class="hidden"><span data-i18n="f.ali">支付宝付款信息</span> <span class="req">*</span>
+        <input type="text" id="alipayInfo" placeholder="支付宝昵称，或订单号后 6 位" data-i18n-ph="f.aliPh" autocomplete="off" maxlength="80">
+        <span class="hint" data-i18n="f.aliHint">用于人工核对到账，请务必填写。</span>
       </label>
-      <label>备注（选填）
-        <textarea id="note" rows="2" maxlength="300" placeholder="有其他需要说明的可以写在这里"></textarea>
+      <label><span data-i18n="f.note">备注（选填）</span>
+        <textarea id="note" rows="2" maxlength="300" placeholder="有其他需要说明的可以写在这里" data-i18n-ph="f.notePh"></textarea>
       </label>
-      <button type="submit" id="submitBtn" class="btn wide">提交订单</button>
+
+      <div class="notice" id="notice">
+        <div class="notice-title" data-i18n="notice.title">购买须知</div>
+        <ol>
+          <li data-i18n-html="notice.1">本商品为<b>虚拟教程</b>（数字内容），<b>发货后不退款</b>。</li>
+          <li data-i18n-html="notice.2">请<b>正确填写邮箱</b>，收货时记得检查<b>垃圾邮件</b>箱。</li>
+          <li data-i18n-html="notice.3">确认到账后 <b>24 小时内</b>发货。</li>
+          <li data-i18n-html="notice.4">使用支付宝付款时，<b>必须填写付款信息</b>（昵称或订单号后几位），以便核对到账。</li>
+        </ol>
+        <label class="agree" id="agreeLabel"><input type="checkbox" id="agree" disabled> <span id="agreeText">请先阅读购买须知（5 秒）</span></label>
+      </div>
+
+      <button type="submit" id="submitBtn" class="btn wide" disabled data-i18n="f.submit">提交订单</button>
       <div id="formMsg" class="form-msg" role="status"></div>
     </form>
   </section>
 
+  <section id="lookup" class="card">
+    <h2 data-i18n="lk.title">查询订单</h2>
+    <p class="muted small" data-i18n="lk.desc">输入订单号和查询口令，或直接粘贴订单凭证的全部内容。</p>
+    <form id="lookupForm" novalidate>
+      <div class="row2">
+        <label><span data-i18n="lk.id">订单号</span>
+          <input type="text" id="lkId" placeholder="例如 M20261105-AB12" data-i18n-ph="lk.idPh" autocomplete="off" spellcheck="false" autocapitalize="characters">
+        </label>
+        <label><span data-i18n="lk.code">查询口令</span>
+          <input type="text" id="lkCode" placeholder="10 位字母和数字" data-i18n-ph="lk.codePh" autocomplete="off" spellcheck="false" autocapitalize="characters">
+        </label>
+      </div>
+      <label><span data-i18n="lk.paste">或粘贴订单凭证全文</span>
+        <textarea id="lkPaste" rows="2" placeholder="把下载的订单凭证 .txt 里的内容粘贴到这里，会自动识别" data-i18n-ph="lk.pastePh"></textarea>
+      </label>
+      <button type="submit" id="lkBtn" class="btn wide" data-i18n="lk.btn">查询</button>
+      <div id="lkMsg" class="form-msg" role="status"></div>
+    </form>
+    <div class="recent">
+      <h3 data-i18n="lk.recent">我的最近订单</h3>
+      <div id="recentList"></div>
+      <p class="muted small" data-i18n="lk.recentHint">只保存在本浏览器里；换手机或清理浏览器数据后会消失，请保留订单凭证。</p>
+    </div>
+  </section>
+
   <section class="card faq">
-    <h2>常见问题</h2>
-    <details open><summary>多久发货？</summary><p>人工发货。确认到账后，一般在 24 小时内把教程发到你填写的邮箱。请留意垃圾邮件箱。</p></details>
-    <details><summary>如何付款？</summary><p>可选支付宝扫码支付 ¥9.99，或使用支持 BNB Smart Chain 的钱包转 USDT（BSC / BEP20）。付款后回到本页提交订单。</p></details>
-    <details><summary>USDT 金额为什么会变？</summary><p>售价固定为 ¥9.99，USDT 数量按实时汇率换算并向上取整到 0.01。请以页面显示的数量为准。</p></details>
-    <details><summary>转错网络或金额不对怎么办？</summary><p>非 BEP20 网络的 USDT 转账无法到账，请务必核对网络。金额不足的订单不会发货，可在备注里说明后补差额。支付宝请按 ¥9.99 付款。</p></details>
+    <h2 data-i18n="faq.title">常见问题</h2>
+    <details open><summary data-i18n="faq.q1">多久发货？</summary><p data-i18n="faq.a1">人工发货。确认到账后，一般在 24 小时内把教程发到你填写的邮箱。请留意垃圾邮件箱。</p></details>
+    <details><summary data-i18n="faq.q2">如何付款？</summary><p data-i18n="faq.a2">可选支付宝扫码支付 ¥9.99，或使用支持 BNB Smart Chain 的钱包转 USDT（BSC / BEP20）。付款后回到本页提交订单。</p></details>
+    <details><summary data-i18n="faq.q3">USDT 金额为什么会变？</summary><p data-i18n="faq.a3">售价固定为 ¥9.99，USDT 数量按实时汇率换算并向上取整到 0.01。请以页面显示的数量为准。</p></details>
+    <details><summary data-i18n="faq.q4">转错网络或金额不对怎么办？</summary><p data-i18n="faq.a4">非 BEP20 网络的 USDT 转账无法到账，请务必核对网络。金额不足的订单不会发货，可在备注里说明后补差额。支付宝请按 ¥9.99 付款。</p></details>
+    <details><summary data-i18n="faq.q5">怎么查订单进度？</summary><p data-i18n="faq.a5">提交订单后会自动下载一份订单凭证，里面有订单号和查询口令。在本页“查询订单”里输入即可查看：待确认、已收款或已发货。</p></details>
   </section>
 
   <section class="card contact">
-    <h2>联系方式</h2>
-    <p>提交订单后，如有任何问题，我们会通过你留下的邮箱联系你。需要补充信息时，可以重新提交一次订单并在备注中说明（附上原订单号）。</p>
+    <h2 data-i18n="contact.title">联系方式</h2>
+    <p data-i18n="contact.body">提交订单后，如有任何问题，我们会通过你留下的邮箱联系你。需要补充信息时，可以重新提交一次订单并在备注中说明（附上原订单号）。</p>
   </section>
 
-  <p class="disclaimer">声明：本站出售的是作者独立编写的注册教程（数字内容），不提供任何账户。本站与 Muse 及其所属公司无任何关联，亦未获得其授权或认可，相关名称和商标归其各自所有者所有。请遵守 Muse 的服务条款使用其服务。</p>
+  <p class="disclaimer" data-i18n="disclaimer">声明：本站出售的是作者独立编写的注册教程（数字内容），不提供任何账户。本站与 Muse 及其所属公司无任何关联，亦未获得其授权或认可，相关名称和商标归其各自所有者所有。请遵守 Muse 的服务条款使用其服务。</p>
 </main>
 
-<footer class="foot"><div class="wrap">© <span id="yr"></span> Muse 注册教程</div></footer>
+<footer class="foot"><div class="wrap">© <span id="yr"></span> <span data-i18n="foot">Muse 注册教程</span></div></footer>
+
+<div id="confirm" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="cfTitle">
+  <div class="modal-box">
+    <h3 id="cfTitle" data-i18n="cf.title">请核对订单信息</h3>
+    <dl id="cfList" class="cf-list"></dl>
+    <p class="warn small" data-i18n="cf.tip">邮箱写错将无法收到教程，请仔细核对。</p>
+    <div class="modal-actions">
+      <button type="button" id="cfBack" class="btn ghost" data-i18n="cf.back">返回修改</button>
+      <button type="button" id="cfOk" class="btn" data-i18n="cf.ok">确认提交</button>
+    </div>
+  </div>
+</div>
 
 <script src="qrcode.js"></script>
 <script src="config.js"></script>
+<script src="i18n.js"></script>
+<script src="lookup.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

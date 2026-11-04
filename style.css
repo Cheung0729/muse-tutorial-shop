@@ -55,3 +55,44 @@ input:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0
 .chip.alipay{background:#e8f4ff;color:#1677ff}
 .alipay-box{border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
 .alipay-qr{width:min(280px,86vw);height:auto;border-radius:12px;display:block;margin:8px auto 10px;background:#fff}
+
+/* 导航 / 语言 */
+.nav{display:flex;align-items:center;gap:10px}
+.navlink{color:var(--ink);text-decoration:none;font-size:14px;font-weight:600}
+.navlink:hover{color:var(--brand)}
+.lang-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit}
+.lang-btn:hover{color:var(--brand);border-color:var(--brand)}
+@media(max-width:420px){.logo{font-size:14px}.nav{gap:6px}.navlink{font-size:13px}.top .btn.small{padding:5px 10px;font-size:13px}}
+/* 购买须知 */
+.notice{border:1px solid var(--line);background:#f8f9fe;border-radius:12px;padding:12px 14px;margin:4px 0 14px;font-size:14px}
+.notice-title{font-weight:700;margin-bottom:4px}
+.notice ol{margin:0 0 8px;padding-left:20px}.notice li{margin:3px 0}
+form label.agree{display:flex;align-items:center;gap:8px;margin:6px 0 0;font-weight:600;cursor:pointer}
+.agree input{display:inline-block;width:18px;height:18px;margin:0;flex:none;accent-color:var(--brand)}
+.agree.locked{color:var(--muted);cursor:not-allowed}
+/* 提示 */
+.form-msg.info{background:#eef0ff;border:1px solid #c9cdfb;color:#33358f;border-radius:10px;padding:12px}
+.cred{background:#fff;border:1px dashed #a8e2c8;border-radius:8px;padding:8px 10px;margin:8px 0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:1px}
+.ok-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.btn.ghost{background:#eef0ff;color:var(--brand)}
+/* 查询 */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.row2{grid-template-columns:1fr;gap:0}}
+.recent{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+.recent h3{font-size:16px;margin:0 0 8px}
+.recent-item{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.ri-main{display:flex;flex-direction:column;min-width:0;word-break:break-all}
+.ri-status{font-size:13px;margin-top:2px}
+.st-shipped,.st-paid{color:var(--ok)}.st-pending,.st-notfound{color:#33358f}.st-error{color:var(--err)}
+.ri-actions{display:flex;gap:6px;flex:none}
+/* 确认弹窗 */
+.modal{position:fixed;inset:0;background:rgba(20,22,40,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal-box{background:#fff;border-radius:16px;max-width:460px;width:100%;padding:20px;max-height:90vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.2)}
+.modal-box h3{margin:0 0 12px;font-size:18px}
+.cf-list{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0 0 12px;font-size:14px}
+.cf-list dt{color:var(--muted)}.cf-list dd{margin:0;font-weight:600;word-break:break-all}
+.modal .warn{margin-top:0}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.modal-actions .btn{flex:1}
+body.noscroll{overflow:hidden}

@@ -1,21 +1,35 @@
 (function () {
   "use strict";
-  var C = window.SHOP_CONFIG;
+  var C = window.SHOP_CONFIG, I = window.I18N, L = window.MuseLookup, t = I.t;
   var $ = function (id) { return document.getElementById(id); };
-  var state = { rate: C.fallbackRate, usdt: null, rateSource: "fallback", method: "alipay" };
+  var state = { rate: C.fallbackRate, usdt: null, rateSource: "fallback", method: "alipay", agreed: false, pending: null };
+  var RECENT_KEY = "museOrders";
 
   $("yr").textContent = new Date().getFullYear();
   $("addr").textContent = C.address;
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
+  // ---------- 语言 ----------
+  var views = []; // 语言切换时需要重绘的动态内容
+  function onLang(fn) { views.push(fn); }
+  I.onChange(function () { views.forEach(function (fn) { fn(); }); });
+  $("langBtn").addEventListener("click", function () { I.set(I.lang === "zh" ? "en" : "zh"); });
+  function fmtTime(iso) {
+    var d = new Date(iso); if (isNaN(d)) return "";
+    try { return d.toLocaleString(I.lang === "zh" ? "zh-CN" : "en-US", { timeZone: "Asia/Shanghai", hour12: false }) + (I.lang === "zh" ? "（北京时间）" : " (Beijing time)"); }
+    catch (e) { return d.toISOString(); }
+  }
+
+  // ---------- USDT 收款 ----------
+  var qrOk = true;
   try {
-    var qr = qrcode(0, "M");
-    qr.addData(C.address);
-    qr.make();
+    var qr = qrcode(0, "M"); qr.addData(C.address); qr.make();
     $("qr").innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
-  } catch (e) { $("qr").textContent = "二维码生成失败，请直接复制地址"; }
+  } catch (e) { qrOk = false; }
+  onLang(function () { if (!qrOk) $("qr").textContent = t("usdt.qrFail"); });
 
-  function flash(msg, ok) {
-    var el = $("copyMsg"); el.textContent = msg; el.style.color = ok ? "" : "#d64545";
+  function flash(key, ok) {
+    var el = $("copyMsg"); el.textContent = t(key); el.style.color = ok ? "" : "#d64545";
     clearTimeout(flash.t); flash.t = setTimeout(function () { el.textContent = ""; }, 2500);
   }
   function fallbackCopy(text) {
@@ -26,13 +40,10 @@
     document.body.removeChild(ta); return ok;
   }
   $("copyBtn").addEventListener("click", function () {
-    var t = C.address;
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(t).then(function () { flash("✓ 地址已复制", true); },
-        function () { var ok = fallbackCopy(t); flash(ok ? "✓ 地址已复制" : "复制失败，请长按地址手动复制", ok); });
-    } else {
-      var ok = fallbackCopy(t); flash(ok ? "✓ 地址已复制" : "复制失败，请长按地址手动复制", ok);
-    }
+    var tx = C.address;
+    var done = function (ok) { flash(ok ? "usdt.copied" : "usdt.copyFail", ok); };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(tx).then(function () { done(true); }, function () { done(fallbackCopy(tx)); });
+    else done(fallbackCopy(tx));
   });
 
   function setMethod(method) {
@@ -51,27 +62,28 @@
       btn.classList.toggle("active", on);
       btn.setAttribute("aria-selected", on ? "true" : "false");
     });
-    msg("");
+    msg(null);
   }
   Array.prototype.forEach.call(document.querySelectorAll(".method"), function (btn) {
     btn.addEventListener("click", function () { setMethod(btn.getAttribute("data-method")); });
   });
-  setMethod("alipay");
 
   function withTimeout(p, ms) {
     return Promise.race([p, new Promise(function (_, rej) { setTimeout(function () { rej(new Error("timeout")); }, ms); })]);
   }
   function getJson(url) { return withTimeout(fetch(url, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }), 5000); }
   function sane(r) { return typeof r === "number" && r > 4 && r < 12; }
+  var rateLoaded = false;
   function render() {
     var usdt = Math.ceil((C.priceCny / state.rate) * 100 - 1e-9) / 100;
     state.usdt = usdt.toFixed(2);
     $("usdt").textContent = state.usdt;
     Array.prototype.forEach.call(document.querySelectorAll(".amt-inline"), function (el) { el.textContent = state.usdt; });
-    var src = { coingecko: "CoinGecko 实时汇率", fx: "美元汇率（USDT≈USD）", fallback: "参考汇率（实时汇率暂不可用）" }[state.rateSource];
-    $("rateNote").textContent = "¥" + C.priceCny + " ÷ " + state.rate.toFixed(4) + "（" + src + "），向上取整";
+    $("rateNote").textContent = rateLoaded
+      ? t("rate.note", { price: C.priceCny, rate: state.rate.toFixed(4), src: t("rate." + state.rateSource) })
+      : t("usdt.rateLoading");
   }
-  render();
+  onLang(render);
   getJson("https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=cny")
     .then(function (j) { var r = j && j.tether && j.tether.cny; if (!sane(r)) throw new Error("bad"); state.rate = r; state.rateSource = "coingecko"; })
     .catch(function () {
@@ -80,7 +92,7 @@
       });
     })
     .catch(function () { state.rateSource = "fallback"; })
-    .then(render);
+    .then(function () { rateLoaded = true; render(); });
 
   var TRANSFER = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
   function rpc(method, params) {
@@ -91,7 +103,7 @@
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: method, params: params }) })
         .then(function (r) { return r.json(); }), 6000)
         .then(function (j) { if (j.error) throw new Error(j.error.message); return j.result; })
-        .catch(next);
+        .catch(function () { return next(); });
     }
     return next();
   }
@@ -127,63 +139,212 @@
   }
   function orderId() {
     var d = new Date(), p = function (n) { return String(n).padStart(2, "0"); };
-    var a = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", r = crypto.getRandomValues(new Uint8Array(4)), s = "";
-    for (var i = 0; i < 4; i++) s += a[r[i] % a.length];
-    return "M" + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-" + s;
+    return "M" + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-" + L.newCode(4);
   }
-  function msg(html, cls) { var el = $("formMsg"); el.className = "form-msg " + (cls || ""); el.innerHTML = html; }
-  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+  // 表单提示：保存“渲染函数”，切换语言时重绘
+  function msg(fn, cls) {
+    var el = $("formMsg");
+    msg.cur = fn ? { fn: fn, cls: cls } : null;
+    el.className = "form-msg " + (fn ? cls || "" : "");
+    el.innerHTML = fn ? fn() : "";
+  }
+  function msgKey(key, cls) { msg(function () { return esc(t(key)); }, cls); }
+  onLang(function () { if (msg.cur) msg(msg.cur.fn, msg.cur.cls); });
+
+  // ---------- 购买须知：倒计时 5 秒后才能勾选 ----------
+  var waitLeft = 5, timerStarted = false;
+  function renderAgree() {
+    $("agreeText").textContent = waitLeft > 0 ? t("notice.wait", { n: waitLeft }) : t("notice.agree");
+    $("agree").disabled = waitLeft > 0;
+    $("agreeLabel").classList.toggle("locked", waitLeft > 0);
+    $("submitBtn").disabled = !(state.agreed && waitLeft <= 0) || !!state.busy;
+  }
+  onLang(renderAgree);
+  function startTimer() {
+    if (timerStarted) return; timerStarted = true;
+    var iv = setInterval(function () { waitLeft--; renderAgree(); if (waitLeft <= 0) clearInterval(iv); }, 1000);
+  }
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (ents) { if (ents.some(function (e) { return e.isIntersecting; })) { startTimer(); io.disconnect(); } }, { threshold: 0.5 });
+    io.observe($("notice"));
+  } else startTimer();
+  $("agree").addEventListener("change", function () { state.agreed = $("agree").checked; renderAgree(); });
+  function busy(on, key) {
+    state.busy = on; renderAgree();
+    $("submitBtn").textContent = t(key || "f.submit");
+  }
+
+  // ---------- 确认弹窗 ----------
+  function colon() { return I.lang === "zh" ? "：" : ": "; }
+  function methodName(m) { return t(m === "alipay" ? "m.alipay" : "m.usdt"); }
+  function chkText(o) {
+    var c = o.precheck || {};
+    if (c.status === "found") return c.paid + 1e-9 >= Number(o.quotedUsdt) * 0.98 ? t("chk.found", { paid: c.paid }) : t("chk.under", { paid: c.paid });
+    return t("chk.pending");
+  }
+  function renderConfirm() {
+    var o = state.pending; if (!o) return;
+    var rows = [[t("cf.method"), methodName(o.method)],
+      [t("cf.amount"), o.method === "alipay" ? "¥" + o.priceCny : o.quotedUsdt + " USDT (≈ ¥" + o.priceCny + ")"],
+      [t("cf.email"), o.email]];
+    if (o.method === "alipay") rows.push([t("cf.ali"), o.alipayInfo]);
+    else { rows.push([t("cf.tx"), o.tx]); rows.push([t("cf.chk"), chkText(o)]); }
+    if (o.note) rows.push([t("cf.note"), o.note]);
+    $("cfList").innerHTML = rows.map(function (r) { return "<dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("");
+  }
+  onLang(renderConfirm);
+  function openConfirm(o) { state.pending = o; renderConfirm(); $("confirm").classList.remove("hidden"); document.body.classList.add("noscroll"); $("cfOk").focus(); }
+  function closeConfirm() { state.pending = null; $("confirm").classList.add("hidden"); document.body.classList.remove("noscroll"); }
+  $("cfBack").addEventListener("click", function () { closeConfirm(); busy(false); });
+  $("confirm").addEventListener("click", function (e) { if (e.target === $("confirm")) { closeConfirm(); busy(false); } });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && state.pending) { closeConfirm(); busy(false); } });
+
+  // ---------- 订单凭证 & 最近订单 ----------
+  function credentialText(r) {
+    var zh = I.dict.zh, en = I.dict.en;
+    var line = function (k, v) { return zh[k] + " " + en[k] + ": " + v; };
+    return [zh["cred.title"], en["cred.title"], "",
+      line("cred.id", r.id), line("cred.code", r.code),
+      line("cred.method", (r.method === "alipay" ? zh["m.alipay"] + " / " + en["m.alipay"] : "USDT (BEP20)")),
+      line("cred.amount", r.method === "alipay" ? "¥" + r.priceCny : r.quotedUsdt + " USDT (≈ ¥" + r.priceCny + ")"),
+      line("cred.time", new Date(r.createdAt).toLocaleString("zh-CN", { timeZone: "Asia/Shanghai", hour12: false }) + " (北京时间 Beijing time)"),
+      line("cred.url", C.siteUrl + "#lookup"), "",
+      zh["cred.note"], en["cred.note"], ""].join("\r\n");
+  }
+  function download(r) {
+    try {
+      var blob = new Blob(["\ufeff" + credentialText(r)], { type: "text/plain;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "Muse订单凭证-" + r.id + ".txt";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    } catch (e) {}
+  }
+  function loadRecent() { try { var a = JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function saveRecent(a) { try { localStorage.setItem(RECENT_KEY, JSON.stringify(a.slice(0, 20))); } catch (e) {} }
+  function addRecent(r) { var a = loadRecent().filter(function (x) { return x.id !== r.id; }); a.unshift(r); saveRecent(a); renderRecent(); }
+  var recentStatus = {};
+  function statusLine(res) {
+    if (res.kind === "found") return t("lk." + res.status) + (res.updatedAt ? " " + t("lk.updated", { t: fmtTime(res.updatedAt) }) : "");
+    return t(res.kind === "notfound" ? "lk.notfound" : "lk.error");
+  }
+  function renderRecent() {
+    var a = loadRecent(), el = $("recentList");
+    if (!a.length) { el.innerHTML = '<p class="muted small">' + esc(t("lk.recentEmpty")) + "</p>"; return; }
+    el.innerHTML = a.map(function (r, i) {
+      var st = recentStatus[r.id];
+      return '<div class="recent-item"><div class="ri-main"><b>' + esc(r.id) + '</b><span class="muted small">' + esc(methodName(r.method)) + " · " + esc(fmtTime(r.createdAt)) + "</span>" +
+        (st ? '<span class="ri-status st-' + esc(st.kind === "found" ? st.status : st.kind) + '">' + esc(statusLine(st)) + "</span>" : "") +
+        '</div><div class="ri-actions"><button type="button" class="btn small" data-act="check" data-i="' + i + '">' + esc(t("lk.check")) + '</button>' +
+        '<button type="button" class="btn small ghost" data-act="dl" data-i="' + i + '" title="' + esc(t("ok.download")) + '">⬇︎</button>' +
+        '<button type="button" class="btn small ghost" data-act="rm" data-i="' + i + '" title="' + esc(t("lk.remove")) + '">✕</button></div></div>';
+    }).join("");
+  }
+  onLang(renderRecent);
+  $("recentList").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-act]"); if (!b) return;
+    var a = loadRecent(), r = a[+b.getAttribute("data-i")]; if (!r) return;
+    var act = b.getAttribute("data-act");
+    if (act === "dl") return download(r);
+    if (act === "rm") { if (confirm(t("lk.removeAsk"))) { saveRecent(a.filter(function (x) { return x.id !== r.id; })); delete recentStatus[r.id]; renderRecent(); } return; }
+    $("lkId").value = r.id; $("lkCode").value = r.code; $("lkPaste").value = "";
+    doLookup(r.id, r.code);
+  });
+
+  // ---------- 查询订单 ----------
+  function lkMsg(fn, cls) { var el = $("lkMsg"); lkMsg.cur = fn ? { fn: fn, cls: cls } : null; el.className = "form-msg " + (fn ? cls || "" : ""); el.innerHTML = fn ? fn() : ""; }
+  onLang(function () { if (lkMsg.cur) lkMsg(lkMsg.cur.fn, lkMsg.cur.cls); });
+  function doLookup(id, code) {
+    var btn = $("lkBtn"); btn.disabled = true; btn.textContent = t("lk.loading"); lkMsg(null);
+    return L.fetchStatus(id, code, C.statusUrls).then(function (res) {
+      recentStatus[L.normId(id)] = res; renderRecent();
+      var cls = res.kind === "found" ? (res.status === "pending" ? "info" : "ok") : (res.kind === "notfound" ? "info" : "err");
+      lkMsg(function () { return "<b>" + esc(L.normId(id)) + "</b><br>" + esc(statusLine(res)); }, cls);
+      return res;
+    }).catch(function () { lkMsg(function () { return esc(t("lk.error")); }, "err"); })
+      .then(function (res) { btn.disabled = false; btn.textContent = t("lk.btn"); return res; });
+  }
+  $("lkPaste").addEventListener("input", function () {
+    var p = L.parseCredential($("lkPaste").value);
+    if (p.id) $("lkId").value = p.id;
+    if (p.code) $("lkCode").value = p.code;
+    if (p.id && p.code) lkMsg(function () { return esc(t("lk.parsed")); }, "info");
+  });
+  $("lookupForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var p = L.parseCredential($("lkPaste").value);
+    var id = L.normId($("lkId").value || p.id), code = L.normCode($("lkCode").value || p.code);
+    if (!id || code.length < 6) return lkMsg(function () { return esc(t("lk.need")); }, "err");
+    doLookup(id, code);
+  });
+  (function () { var m = location.hash.match(/^#lookup[=:]([A-Za-z0-9-]+)/); if (m) $("lkId").value = L.normId(m[1]); })();
+
+  // ---------- 提交订单 ----------
+  function send(o) {
+    busy(true, "f.submitting");
+    return encrypt(o).then(function (body) {
+      return withTimeout(fetch(C.orderEndpoint, { method: "POST", body: body }), 10000);
+    }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      var rec = { id: o.id, code: o.queryCode, method: o.method, priceCny: o.priceCny, quotedUsdt: o.quotedUsdt, createdAt: o.createdAt };
+      addRecent(rec);
+      download(rec);
+      $("orderForm").reset(); state.agreed = false;
+      setMethod(o.method); // 会清空提示，所以放在显示成功信息之前
+      var email = o.email, extra = o.method === "alipay" ? function () { return esc(t("ok.ali")); } : function () { return esc(chkText(o)); };
+      msg(function () {
+        return "<b>" + esc(t("ok.title")) + "</b>" +
+          '<div class="cred"><div>' + esc(t("ok.id")) + colon() + "<b>" + esc(o.id) + "</b></div><div>" + esc(t("ok.code")) + colon() + "<b class=\"mono\">" + esc(o.queryCode) + "</b></div></div>" +
+          esc(t("ok.saved")) + "<br>" + extra() + "<br>" + t("ok.ship", { email: esc(email) }) +
+          '<div class="ok-actions"><button type="button" class="btn small" id="okDl">' + esc(t("ok.download")) + '</button> <a class="btn small ghost" href="#lookup" id="okLk">' + esc(t("ok.lookup")) + "</a></div>";
+      }, "ok");
+    });
+  }
+  $("formMsg").addEventListener("click", function (e) {
+    if (e.target.id === "okDl") { var a = loadRecent(); if (a[0]) download(a[0]); }
+    if (e.target.id === "okLk") { var b = loadRecent()[0]; if (b) { $("lkId").value = b.id; $("lkCode").value = b.code; setTimeout(function () { doLookup(b.id, b.code); }, 50); } }
+  });
+
+  $("cfOk").addEventListener("click", function () {
+    var o = state.pending; if (!o) return;
+    closeConfirm();
+    send(o).catch(function () { msgKey("err.net", "err"); }).then(function () { busy(false); });
+  });
 
   $("orderForm").addEventListener("submit", function (e) {
     e.preventDefault();
+    if (state.busy) return;
     var email = $("email").value.trim(), note = $("note").value.trim(), method = state.method;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return msg("请填写正确的邮箱地址。", "err");
-
-    var btn = $("submitBtn");
-    function send(order, extra) {
-      btn.textContent = "正在提交…";
-      return encrypt(order).then(function (body) {
-        return withTimeout(fetch(C.orderEndpoint, { method: "POST", body: body }), 10000);
-      }).then(function (r) {
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        msg("<b>✓ 订单已提交</b><br>订单号：<b>" + esc(order.id) + "</b>（请截图保存）<br>" + extra + "<br>确认到账后，教程会发送到 <b>" + esc(email) + "</b>，一般 24 小时内。", "ok");
-        $("orderForm").reset();
-        setMethod(state.method);
-      });
-    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return msgKey("err.email", "err");
+    if (!state.agreed || waitLeft > 0) return msgKey("err.agree", "err");
+    var base = { id: orderId(), queryCode: L.newCode(10), email: email, note: note, priceCny: C.priceCny, createdAt: new Date().toISOString() };
 
     if (method === "alipay") {
       var info = $("alipayInfo").value.trim();
-      if (info.length < 2) return msg("请填写支付宝昵称或订单号后几位，方便核对到账。", "err");
-      btn.disabled = true; btn.textContent = "正在提交…"; msg("");
-      var idA = orderId();
-      var orderA = {
-        id: idA, method: "alipay", email: email, alipayInfo: info, note: note,
-        priceCny: C.priceCny, quotedUsdt: null, tx: null,
-        rate: null, rateSource: null, precheck: { status: "manual" },
-        createdAt: new Date().toISOString()
-      };
-      send(orderA, "支付方式：支付宝。我们会按你填写的付款信息人工核对 ¥9.99 到账。")
-        .catch(function () { msg("提交失败，请检查网络后重试。", "err"); })
-        .then(function () { btn.disabled = false; btn.textContent = "提交订单"; });
+      if (info.length < 2) return msgKey("err.ali", "err");
+      msg(null);
+      busy(true, "f.submit");
+      openConfirm(Object.assign(base, { method: "alipay", alipayInfo: info, quotedUsdt: null, tx: null, rate: null, rateSource: null, precheck: { status: "manual" } }));
       return;
     }
 
     var tx = $("tx").value.trim().toLowerCase();
-    if (!/^0x[0-9a-f]{64}$/.test(tx)) return msg("交易哈希格式不对：应为 0x 开头、共 66 位的字符串。", "err");
-    btn.disabled = true; btn.textContent = "正在核对交易…"; msg("");
+    if (!/^0x[0-9a-f]{64}$/.test(tx)) return msgKey("err.tx", "err");
+    busy(true, "f.checking"); msg(null);
     checkTx(tx).then(function (chk) {
-      if (chk.status === "failed") throw { user: "这笔交易在链上显示失败，请确认转账成功后再提交。" };
-      if (chk.status === "mismatch") throw { user: "这笔交易里没有找到转入本店地址的 USDT（BEP20）。请检查网络、币种和交易哈希是否正确。" };
-      var id = orderId();
-      var order = { id: id, method: "usdt", email: email, tx: tx, note: note, priceCny: C.priceCny, quotedUsdt: state.usdt,
-        rate: state.rate, rateSource: state.rateSource, precheck: chk, createdAt: new Date().toISOString() };
-      var extra = chk.status === "found"
-        ? (chk.paid + 1e-9 >= Number(state.usdt) * 0.98 ? "链上已查到你的转账（" + chk.paid + " USDT）。" : "链上查到转账 " + chk.paid + " USDT，少于应付金额，可能需要补差额。")
-        : "交易暂未在链上查到，可能仍在确认中，我们会再次核对。";
-      return send(order, esc(extra));
+      if (chk.status === "failed") throw { user: "err.txFailed" };
+      if (chk.status === "mismatch") throw { user: "err.txMismatch" };
+      openConfirm(Object.assign(base, { method: "usdt", tx: tx, quotedUsdt: state.usdt, rate: state.rate, rateSource: state.rateSource, precheck: chk }));
+      $("submitBtn").textContent = t("f.submit");
     }).catch(function (err) {
-      msg(err && err.user ? esc(err.user) : "提交失败，请检查网络后重试。", "err");
-    }).then(function () { btn.disabled = false; btn.textContent = "提交订单"; });
+      msgKey(err && err.user ? err.user : "err.net", "err"); busy(false);
+    });
   });
+
+  // ---------- 启动 ----------
+  I.apply();
+  setMethod("alipay");
+  render(); renderAgree(); renderRecent();
+  if (!qrOk) $("qr").textContent = t("usdt.qrFail");
 })();

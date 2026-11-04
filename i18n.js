@@ -1,0 +1,215 @@
+// 界面文案（中文 / English）。所有页面文字都从这里取。
+(function () {
+  "use strict";
+  var D = {
+    zh: {
+      "doc.title": "Muse 注册教程 · ¥9.99",
+      "doc.desc": "一份图文并茂的 Muse 注册教程，手把手带你完成注册。支持支付宝与 USDT (BEP20) 付款，邮箱发货。",
+      "nav.lookup": "查询订单", "nav.buy": "立即购买", "nav.lang": "EN", "nav.langTitle": "Switch to English",
+      "logo": "📘 Muse 注册教程",
+      "hero.tag": "独立教程 · 邮箱发货", "hero.title": "Muse 注册教程",
+      "hero.lead": "从零开始，一步一步带你完成 Muse 的注册。步骤清晰、图文对照，新手也能照着做。",
+      "hero.p1": "✅ 完整注册流程，按步骤讲清楚", "hero.p2": "✅ 注册中常见问题的处理思路", "hero.p3": "✅ 注册完成后的基础设置建议",
+      "hero.priceNote": "数字教程 · 邮箱发送",
+      "buy.title": "购买步骤",
+      "usdt.s1": "<b>转账</b>：用支持 BNB Smart Chain 的钱包，向下方地址转入 <b class=\"amt-inline\">…</b> USDT（BEP20）。",
+      "usdt.s2": "<b>提交订单</b>：填写你的邮箱和转账的交易哈希（Tx Hash）。",
+      "usdt.s3": "<b>收货</b>：确认到账后，教程会发送到你的邮箱。",
+      "ali.s1": "<b>扫码付款</b>：用支付宝扫描下方二维码，支付 <b>¥9.99</b>。",
+      "ali.s2": "<b>提交订单</b>：填写你的邮箱，并备注付款人昵称或支付宝订单号后几位，方便核对。",
+      "ali.s3": "<b>收货</b>：确认到账后，教程会发送到你的邮箱。",
+      "tabs.label": "支付方式", "tab.alipay": "支付宝", "tab.usdt": "USDT（币安链）",
+      "chip.alipay": "支付宝", "chip.shop": "666商店",
+      "ali.qrAlt": "支付宝收款二维码 · 666商店",
+      "ali.hint": "请用支付宝扫一扫支付 <b>¥9.99</b>。付款后回到本页提交订单。",
+      "ali.warn": "⚠️ 请按金额 <b>¥9.99</b> 付款。提交订单时请填写支付宝昵称或订单号后几位，方便我们核对到账。",
+      "usdt.due": "应付金额", "usdt.rateLoading": "正在获取实时汇率…",
+      "usdt.qrLabel": "收款地址二维码", "usdt.copy": "复制地址",
+      "usdt.copied": "✓ 地址已复制", "usdt.copyFail": "复制失败，请长按地址手动复制", "usdt.qrFail": "二维码生成失败，请直接复制地址",
+      "usdt.warn": "⚠️ <b>只支持 USDT（BEP20 / BSC 链）</b>。请勿通过以太坊 ERC20、波场 TRC20 等其他网络转账，也不要转入其他币种，否则资金将无法找回。转账前请仔细核对地址。",
+      "rate.coingecko": "CoinGecko 实时汇率", "rate.fx": "美元汇率（USDT≈USD）", "rate.fallback": "参考汇率（实时汇率暂不可用）",
+      "rate.note": "¥{price} ÷ {rate}（{src}），向上取整",
+      "order.title": "提交订单",
+      "f.email": "你的邮箱", "f.emailPh": "name@example.com",
+      "f.tx": "交易哈希 Tx Hash", "f.txPh": "0x 开头，共 66 位", "f.txHint": "在钱包的转账记录里可以找到，或在 bscscan.com 查询。",
+      "f.ali": "支付宝付款信息", "f.aliPh": "支付宝昵称，或订单号后 6 位", "f.aliHint": "用于人工核对到账，请务必填写。",
+      "f.note": "备注（选填）", "f.notePh": "有其他需要说明的可以写在这里",
+      "notice.title": "购买须知",
+      "notice.1": "本商品为<b>虚拟教程</b>（数字内容），<b>发货后不退款</b>。",
+      "notice.2": "请<b>正确填写邮箱</b>，收货时记得检查<b>垃圾邮件</b>箱。",
+      "notice.3": "确认到账后 <b>24 小时内</b>发货。",
+      "notice.4": "使用支付宝付款时，<b>必须填写付款信息</b>（昵称或订单号后几位），以便核对到账。",
+      "notice.wait": "请先阅读购买须知（{n} 秒）", "notice.agree": "我已阅读并同意购买须知",
+      "f.submit": "提交订单", "f.submitting": "正在提交…", "f.checking": "正在核对交易…",
+      "err.email": "请填写正确的邮箱地址。", "err.agree": "请先阅读并勾选同意购买须知。",
+      "err.ali": "请填写支付宝昵称或订单号后几位，方便核对到账。",
+      "err.tx": "交易哈希格式不对：应为 0x 开头、共 66 位的字符串。",
+      "err.txFailed": "这笔交易在链上显示失败，请确认转账成功后再提交。",
+      "err.txMismatch": "这笔交易里没有找到转入本店地址的 USDT（BEP20）。请检查网络、币种和交易哈希是否正确。",
+      "err.net": "提交失败，请检查网络后重试。",
+      "chk.found": "链上已查到你的转账（{paid} USDT）。", "chk.under": "链上查到转账 {paid} USDT，少于应付金额，可能需要补差额。",
+      "chk.pending": "交易暂未在链上查到，可能仍在确认中，我们会再次核对。",
+      "cf.title": "请核对订单信息", "cf.method": "支付方式", "cf.amount": "金额", "cf.email": "收货邮箱",
+      "cf.tx": "交易哈希", "cf.ali": "支付宝付款信息", "cf.note": "备注", "cf.chk": "链上预查",
+      "cf.tip": "邮箱写错将无法收到教程，请仔细核对。", "cf.back": "返回修改", "cf.ok": "确认提交",
+      "m.alipay": "支付宝", "m.usdt": "USDT（BEP20）",
+      "ok.title": "✓ 订单已提交", "ok.id": "订单号", "ok.code": "查询口令",
+      "ok.saved": "已自动下载订单凭证，并保存在本浏览器的“我的最近订单”里。请妥善保存订单号和查询口令。",
+      "ok.ali": "支付方式：支付宝。我们会按你填写的付款信息人工核对 ¥9.99 到账。",
+      "ok.ship": "确认到账后，教程会发送到 <b>{email}</b>，一般 24 小时内。",
+      "ok.download": "再次下载凭证", "ok.lookup": "查询这个订单",
+      "cred.title": "Muse 注册教程 · 订单凭证", "cred.id": "订单号", "cred.code": "查询口令", "cred.method": "支付方式",
+      "cred.amount": "金额", "cred.time": "下单时间", "cred.url": "查询地址",
+      "cred.note": "说明：本凭证仅用于查询订单状态，不是教程本身；教程会发送到你填写的邮箱。查询口令请勿告诉他人。",
+      "lk.title": "查询订单",
+      "lk.desc": "输入订单号和查询口令，或直接粘贴订单凭证的全部内容。",
+      "lk.id": "订单号", "lk.idPh": "例如 M20261105-AB12", "lk.code": "查询口令", "lk.codePh": "10 位字母和数字",
+      "lk.paste": "或粘贴订单凭证全文", "lk.pastePh": "把下载的订单凭证 .txt 里的内容粘贴到这里，会自动识别",
+      "lk.btn": "查询", "lk.loading": "正在查询…",
+      "lk.need": "请填写订单号和查询口令（或粘贴订单凭证）。",
+      "lk.parsed": "已从凭证中识别订单号和查询口令。",
+      "lk.pending": "⏳ 已收到订单，正在等待确认付款。确认到账后会尽快发货。",
+      "lk.paid": "✅ 已确认收款，正在准备发货（一般 24 小时内）。",
+      "lk.shipped": "📦 已发货！教程已发送到你下单时填写的邮箱，没看到请检查垃圾邮件箱。",
+      "lk.notfound": "订单处理中，请稍后再查（最长约30分钟）。如果超过 1 小时仍查不到，请核对订单号和查询口令是否正确。",
+      "lk.error": "查询失败，请检查网络后重试。",
+      "lk.updated": "更新时间：{t}",
+      "lk.recent": "我的最近订单", "lk.recentEmpty": "这个浏览器里还没有订单记录。",
+      "lk.recentHint": "只保存在本浏览器里；换手机或清理浏览器数据后会消失，请保留订单凭证。",
+      "lk.check": "查询", "lk.remove": "删除", "lk.removeAsk": "从本浏览器删除这条订单记录？（不影响订单本身）",
+      "faq.title": "常见问题",
+      "faq.q1": "多久发货？", "faq.a1": "人工发货。确认到账后，一般在 24 小时内把教程发到你填写的邮箱。请留意垃圾邮件箱。",
+      "faq.q2": "如何付款？", "faq.a2": "可选支付宝扫码支付 ¥9.99，或使用支持 BNB Smart Chain 的钱包转 USDT（BSC / BEP20）。付款后回到本页提交订单。",
+      "faq.q3": "USDT 金额为什么会变？", "faq.a3": "售价固定为 ¥9.99，USDT 数量按实时汇率换算并向上取整到 0.01。请以页面显示的数量为准。",
+      "faq.q4": "转错网络或金额不对怎么办？", "faq.a4": "非 BEP20 网络的 USDT 转账无法到账，请务必核对网络。金额不足的订单不会发货，可在备注里说明后补差额。支付宝请按 ¥9.99 付款。",
+      "faq.q5": "怎么查订单进度？", "faq.a5": "提交订单后会自动下载一份订单凭证，里面有订单号和查询口令。在本页“查询订单”里输入即可查看：待确认、已收款或已发货。",
+      "contact.title": "联系方式",
+      "contact.body": "提交订单后，如有任何问题，我们会通过你留下的邮箱联系你。需要补充信息时，可以重新提交一次订单并在备注中说明（附上原订单号）。",
+      "disclaimer": "声明：本站出售的是作者独立编写的注册教程（数字内容），不提供任何账户。本站与 Muse 及其所属公司无任何关联，亦未获得其授权或认可，相关名称和商标归其各自所有者所有。请遵守 Muse 的服务条款使用其服务。",
+      "foot": "Muse 注册教程"
+    },
+    en: {
+      "doc.title": "Muse Sign-up Tutorial · ¥9.99",
+      "doc.desc": "An illustrated, step-by-step tutorial for signing up for Muse. Pay with Alipay or USDT (BEP20); delivered by email.",
+      "nav.lookup": "Track order", "nav.buy": "Buy now", "nav.lang": "中文", "nav.langTitle": "切换到中文",
+      "logo": "📘 Muse Sign-up Tutorial",
+      "hero.tag": "Independent guide · Delivered by email", "hero.title": "Muse Sign-up Tutorial",
+      "hero.lead": "Go from zero to a working Muse sign-up, one step at a time. Clear steps with screenshots, easy enough for beginners.",
+      "hero.p1": "✅ The complete sign-up flow, explained step by step", "hero.p2": "✅ How to handle common sign-up problems", "hero.p3": "✅ Recommended basic settings after signing up",
+      "hero.priceNote": "Digital tutorial · Sent by email",
+      "buy.title": "How to buy",
+      "usdt.s1": "<b>Transfer</b>: using a wallet that supports BNB Smart Chain, send <b class=\"amt-inline\">…</b> USDT (BEP20) to the address below.",
+      "usdt.s2": "<b>Submit your order</b>: enter your email and the transaction hash (Tx Hash).",
+      "usdt.s3": "<b>Receive</b>: once payment is confirmed, the tutorial is sent to your email.",
+      "ali.s1": "<b>Scan to pay</b>: scan the QR code below with Alipay and pay <b>¥9.99</b>.",
+      "ali.s2": "<b>Submit your order</b>: enter your email plus your Alipay nickname or the last digits of the Alipay order number so we can match the payment.",
+      "ali.s3": "<b>Receive</b>: once payment is confirmed, the tutorial is sent to your email.",
+      "tabs.label": "Payment method", "tab.alipay": "Alipay", "tab.usdt": "USDT (BNB Chain)",
+      "chip.alipay": "Alipay", "chip.shop": "666 Shop",
+      "ali.qrAlt": "Alipay payment QR code · 666 Shop",
+      "ali.hint": "Scan with Alipay and pay <b>¥9.99</b>, then come back to this page to submit your order.",
+      "ali.warn": "⚠️ Please pay exactly <b>¥9.99</b>. When submitting, enter your Alipay nickname or the last digits of the order number so we can match the payment.",
+      "usdt.due": "Amount due", "usdt.rateLoading": "Fetching live exchange rate…",
+      "usdt.qrLabel": "Receiving address QR code", "usdt.copy": "Copy address",
+      "usdt.copied": "✓ Address copied", "usdt.copyFail": "Copy failed — long-press the address to copy it", "usdt.qrFail": "QR code failed to load — please copy the address",
+      "usdt.warn": "⚠️ <b>USDT on BEP20 (BSC) only.</b> Do not send via Ethereum ERC20, Tron TRC20 or any other network, and do not send other coins — such funds cannot be recovered. Double-check the address before sending.",
+      "rate.coingecko": "CoinGecko live rate", "rate.fx": "USD rate (USDT≈USD)", "rate.fallback": "reference rate (live rate unavailable)",
+      "rate.note": "¥{price} ÷ {rate} ({src}), rounded up",
+      "order.title": "Submit your order",
+      "f.email": "Your email", "f.emailPh": "name@example.com",
+      "f.tx": "Transaction hash (Tx Hash)", "f.txPh": "Starts with 0x, 66 characters", "f.txHint": "Find it in your wallet's transfer history, or look it up on bscscan.com.",
+      "f.ali": "Alipay payment info", "f.aliPh": "Alipay nickname, or last 6 digits of the order number", "f.aliHint": "Required — used to match your payment manually.",
+      "f.note": "Note (optional)", "f.notePh": "Anything else you'd like us to know",
+      "notice.title": "Before you buy",
+      "notice.1": "This is a <b>digital tutorial</b>. <b>No refunds after delivery.</b>",
+      "notice.2": "Make sure your <b>email is correct</b>, and check your <b>spam folder</b> for the delivery.",
+      "notice.3": "Delivered <b>within 24 hours</b> after payment is confirmed.",
+      "notice.4": "If you pay with Alipay, you <b>must fill in your payment info</b> (nickname or last digits of the order number) so we can match it.",
+      "notice.wait": "Please read the notice first ({n}s)", "notice.agree": "I have read and agree to the notice above",
+      "f.submit": "Submit order", "f.submitting": "Submitting…", "f.checking": "Checking transaction…",
+      "err.email": "Please enter a valid email address.", "err.agree": "Please read and accept the notice first.",
+      "err.ali": "Please enter your Alipay nickname or the last digits of the order number.",
+      "err.tx": "Invalid transaction hash: it should start with 0x and be 66 characters long.",
+      "err.txFailed": "This transaction failed on-chain. Please make sure the transfer succeeded before submitting.",
+      "err.txMismatch": "No USDT (BEP20) transfer to our address was found in this transaction. Please check the network, coin and hash.",
+      "err.net": "Submission failed. Please check your connection and try again.",
+      "chk.found": "Your transfer was found on-chain ({paid} USDT).", "chk.under": "Found a transfer of {paid} USDT on-chain, which is less than the amount due — you may need to top up.",
+      "chk.pending": "The transaction isn't on-chain yet (it may still be confirming). We'll check it again.",
+      "cf.title": "Please confirm your order", "cf.method": "Payment method", "cf.amount": "Amount", "cf.email": "Delivery email",
+      "cf.tx": "Transaction hash", "cf.ali": "Alipay payment info", "cf.note": "Note", "cf.chk": "On-chain pre-check",
+      "cf.tip": "If the email is wrong you won't receive the tutorial — please double-check.", "cf.back": "Go back", "cf.ok": "Confirm & submit",
+      "m.alipay": "Alipay", "m.usdt": "USDT (BEP20)",
+      "ok.title": "✓ Order submitted", "ok.id": "Order ID", "ok.code": "Query code",
+      "ok.saved": "Your order credential was downloaded and saved under “My recent orders” in this browser. Keep the order ID and query code safe.",
+      "ok.ali": "Payment: Alipay. We'll manually match the ¥9.99 payment using the info you provided.",
+      "ok.ship": "Once payment is confirmed, the tutorial will be sent to <b>{email}</b>, usually within 24 hours.",
+      "ok.download": "Download credential again", "ok.lookup": "Track this order",
+      "cred.title": "Muse Sign-up Tutorial · Order credential", "cred.id": "Order ID", "cred.code": "Query code", "cred.method": "Payment",
+      "cred.amount": "Amount", "cred.time": "Created", "cred.url": "Track at",
+      "cred.note": "Note: this credential is only for checking your order status — it is not the tutorial itself; the tutorial is sent to your email. Don't share your query code.",
+      "lk.title": "Track your order",
+      "lk.desc": "Enter your order ID and query code, or paste the whole order credential.",
+      "lk.id": "Order ID", "lk.idPh": "e.g. M20261105-AB12", "lk.code": "Query code", "lk.codePh": "10 letters and digits",
+      "lk.paste": "Or paste the full credential", "lk.pastePh": "Paste the contents of the downloaded credential .txt here — it's detected automatically",
+      "lk.btn": "Check status", "lk.loading": "Checking…",
+      "lk.need": "Please enter the order ID and query code (or paste the credential).",
+      "lk.parsed": "Order ID and query code detected from the credential.",
+      "lk.pending": "⏳ Order received, waiting for payment confirmation. We'll ship as soon as payment is confirmed.",
+      "lk.paid": "✅ Payment confirmed — preparing delivery (usually within 24 hours).",
+      "lk.shipped": "📦 Delivered! The tutorial was sent to the email you entered. If you can't find it, check your spam folder.",
+      "lk.notfound": "Your order is being processed — please check again later (up to about 30 minutes). If it still isn't found after an hour, double-check the order ID and query code.",
+      "lk.error": "Lookup failed. Please check your connection and try again.",
+      "lk.updated": "Updated: {t}",
+      "lk.recent": "My recent orders", "lk.recentEmpty": "No orders saved in this browser yet.",
+      "lk.recentHint": "Saved only in this browser — it disappears if you switch devices or clear browser data, so keep your credential file.",
+      "lk.check": "Check", "lk.remove": "Remove", "lk.removeAsk": "Remove this order from this browser? (The order itself is not affected.)",
+      "faq.title": "FAQ",
+      "faq.q1": "How soon is it delivered?", "faq.a1": "Delivery is manual. Once payment is confirmed, the tutorial is usually emailed within 24 hours. Please check your spam folder.",
+      "faq.q2": "How do I pay?", "faq.a2": "Scan the Alipay QR code and pay ¥9.99, or send USDT (BSC / BEP20) from a wallet that supports BNB Smart Chain. Then return to this page to submit your order.",
+      "faq.q3": "Why does the USDT amount change?", "faq.a3": "The price is fixed at ¥9.99; the USDT amount is converted at the live rate and rounded up to 0.01. Please pay the amount shown on the page.",
+      "faq.q4": "Wrong network or wrong amount?", "faq.a4": "USDT sent on networks other than BEP20 cannot be received, so please check the network. Underpaid orders won't ship — explain in the note and top up the difference. For Alipay, please pay ¥9.99.",
+      "faq.q5": "How do I track my order?", "faq.a5": "After submitting, an order credential with your order ID and query code is downloaded automatically. Enter them under “Track your order” to see whether it's pending, paid or delivered.",
+      "contact.title": "Contact",
+      "contact.body": "If anything comes up after you order, we'll contact you at the email you provided. To add information, submit the order form again and explain in the note (include your original order ID).",
+      "disclaimer": "Disclaimer: this site sells an independently written sign-up tutorial (digital content) and does not provide any accounts. This site is not affiliated with, authorized or endorsed by Muse or its parent company; all names and trademarks belong to their respective owners. Please follow Muse's terms of service.",
+      "foot": "Muse Sign-up Tutorial"
+    }
+  };
+  var KEY = "museLang";
+  function detect() {
+    try { var s = localStorage.getItem(KEY); if (s === "zh" || s === "en") return s; } catch (e) {}
+    var langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "zh"]);
+    return /^zh/i.test(String(langs[0] || "")) ? "zh" : "en";
+  }
+  var I = {
+    dict: D,
+    lang: detect(),
+    t: function (k, v) {
+      var s = (D[I.lang] && D[I.lang][k]); if (s == null) s = D.zh[k]; if (s == null) s = k;
+      if (v) s = s.replace(/\{(\w+)\}/g, function (m, n) { return v[n] != null ? v[n] : m; });
+      return s;
+    },
+    listeners: [],
+    onChange: function (fn) { I.listeners.push(fn); },
+    apply: function (root) {
+      root = root || document;
+      document.documentElement.lang = I.lang === "zh" ? "zh-CN" : "en";
+      document.title = I.t("doc.title");
+      var md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute("content", I.t("doc.desc"));
+      var each = function (sel, fn) { Array.prototype.forEach.call(root.querySelectorAll(sel), fn); };
+      each("[data-i18n]", function (el) { el.textContent = I.t(el.getAttribute("data-i18n")); });
+      each("[data-i18n-html]", function (el) { el.innerHTML = I.t(el.getAttribute("data-i18n-html")); });
+      each("[data-i18n-ph]", function (el) { el.setAttribute("placeholder", I.t(el.getAttribute("data-i18n-ph"))); });
+      each("[data-i18n-alt]", function (el) { el.setAttribute("alt", I.t(el.getAttribute("data-i18n-alt"))); });
+      each("[data-i18n-aria]", function (el) { el.setAttribute("aria-label", I.t(el.getAttribute("data-i18n-aria"))); });
+      each("[data-i18n-title]", function (el) { el.setAttribute("title", I.t(el.getAttribute("data-i18n-title"))); });
+    },
+    set: function (l) {
+      I.lang = l === "en" ? "en" : "zh";
+      try { localStorage.setItem(KEY, I.lang); } catch (e) {}
+      I.apply();
+      I.listeners.forEach(function (fn) { try { fn(I.lang); } catch (e) {} });
+    }
+  };
+  window.I18N = I;
+})();

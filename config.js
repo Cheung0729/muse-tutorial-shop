@@ -6,5 +6,8 @@ window.SHOP_CONFIG = {
   usdtContract: "0x55d398326f99059fF775485246999027B3197955", // BSC-USD (BEP20), 18 decimals
   rpc: ["https://bsc-dataseed.bnbchain.org", "https://bsc-rpc.publicnode.com"],
   orderEndpoint: "https://ntfy.sh/mo-e494690a65922dbf3067b347a6ed5331",
+  siteUrl: "https://cheung0729.github.io/muse-tutorial-shop/",
+  // 订单状态文件（只含 status/updatedAt，文件名是 sha256(订单号:查询口令)，无法猜出）。先查本站，再查 GitHub 原始文件（推送后立即可见）。
+  statusUrls: ["https://cheung0729.github.io/muse-tutorial-shop/status/", "https://raw.githubusercontent.com/Cheung0729/muse-tutorial-shop/main/status/"],
   orderPublicKey: {"kty":"RSA","n":"14vxTpl6L3JGprTT4_VkGs2bpxMUxsN0ak4qU-T70-EIOtbLhxoK3o-kNyinUyAxqcql5PTFgz591zX-qTVv-52CFvg0V4xtKXaLToTVgCsX-0YMrB64lgyX68pwrcGYcUXt2cXKzKFf4vEV5QHBQ1xJs_HNf8vqpKzrZp8kzchbOq-R5R1LAOV96xYatqPlenhtjWhqDhuy8MSeA6rN76CWGPcQvPexw7FDVcVrVjIwe6vDoPHhqqHshQvasH8BBYoOLk8ot7omLxzwOBCWcdiSrh0n6Ngvsy5puO4I3IsD5IT4whrry1ESiTcllsDxoUzEX5EHQu1N5JvuDd2fYw","e":"AQAB"}
 };
