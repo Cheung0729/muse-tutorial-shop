@@ -47,3 +47,11 @@ input:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0
 .faq p{margin:8px 0 0;color:#3c4058}
 .disclaimer{font-size:12px;color:var(--muted);margin:18px 4px}
 .foot{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);font-size:13px;text-align:center}
+
+.hidden{display:none!important}
+.method-tabs{display:flex;gap:8px;margin:0 0 16px;background:#f0f2fa;border-radius:12px;padding:4px}
+.method{flex:1;border:none;background:transparent;border-radius:10px;padding:10px 12px;font-size:15px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit}
+.method.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(30,35,90,.08)}
+.chip.alipay{background:#e8f4ff;color:#1677ff}
+.alipay-box{border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+.alipay-qr{width:min(280px,86vw);height:auto;border-radius:12px;display:block;margin:8px auto 10px;background:#fff}

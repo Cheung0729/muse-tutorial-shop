@@ -2,12 +2,11 @@
   "use strict";
   var C = window.SHOP_CONFIG;
   var $ = function (id) { return document.getElementById(id); };
-  var state = { rate: C.fallbackRate, usdt: null, rateSource: "fallback" };
+  var state = { rate: C.fallbackRate, usdt: null, rateSource: "fallback", method: "alipay" };
 
   $("yr").textContent = new Date().getFullYear();
   $("addr").textContent = C.address;
 
-  // ---------- QR ----------
   try {
     var qr = qrcode(0, "M");
     qr.addData(C.address);
@@ -15,7 +14,6 @@
     $("qr").innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
   } catch (e) { $("qr").textContent = "二维码生成失败，请直接复制地址"; }
 
-  // ---------- Copy ----------
   function flash(msg, ok) {
     var el = $("copyMsg"); el.textContent = msg; el.style.color = ok ? "" : "#d64545";
     clearTimeout(flash.t); flash.t = setTimeout(function () { el.textContent = ""; }, 2500);
@@ -37,7 +35,29 @@
     }
   });
 
-  // ---------- Rate ----------
+  function setMethod(method) {
+    state.method = method;
+    var isAlipay = method === "alipay";
+    $("payAlipay").classList.toggle("hidden", !isAlipay);
+    $("payUsdt").classList.toggle("hidden", isAlipay);
+    $("stepsAlipay").classList.toggle("hidden", !isAlipay);
+    $("stepsUsdt").classList.toggle("hidden", isAlipay);
+    $("txLabel").classList.toggle("hidden", isAlipay);
+    $("alipayNoteLabel").classList.toggle("hidden", !isAlipay);
+    $("tx").required = !isAlipay;
+    $("alipayInfo").required = isAlipay;
+    Array.prototype.forEach.call(document.querySelectorAll(".method"), function (btn) {
+      var on = btn.getAttribute("data-method") === method;
+      btn.classList.toggle("active", on);
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    msg("");
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".method"), function (btn) {
+    btn.addEventListener("click", function () { setMethod(btn.getAttribute("data-method")); });
+  });
+  setMethod("alipay");
+
   function withTimeout(p, ms) {
     return Promise.race([p, new Promise(function (_, rej) { setTimeout(function () { rej(new Error("timeout")); }, ms); })]);
   }
@@ -62,7 +82,6 @@
     .catch(function () { state.rateSource = "fallback"; })
     .then(render);
 
-  // ---------- On-chain pre-check ----------
   var TRANSFER = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
   function rpc(method, params) {
     var urls = C.rpc.slice();
@@ -87,12 +106,11 @@
           total += BigInt(l.data);
       });
       if (total === 0n) return { status: "mismatch" };
-      var paid = Number(total / 10n ** 14n) / 10000; // 18 decimals -> 4 dp
+      var paid = Number(total / 10n ** 14n) / 10000;
       return { status: "found", paid: paid };
     }).catch(function () { return { status: "unknown" }; });
   }
 
-  // ---------- Encrypt & submit ----------
   function b64(buf) { var s = "", b = new Uint8Array(buf); for (var i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return btoa(s); }
   function encrypt(obj) {
     var enc = new TextEncoder().encode(JSON.stringify(obj));
@@ -118,27 +136,52 @@
 
   $("orderForm").addEventListener("submit", function (e) {
     e.preventDefault();
-    var email = $("email").value.trim(), tx = $("tx").value.trim().toLowerCase(), note = $("note").value.trim();
+    var email = $("email").value.trim(), note = $("note").value.trim(), method = state.method;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return msg("请填写正确的邮箱地址。", "err");
-    if (!/^0x[0-9a-f]{64}$/.test(tx)) return msg("交易哈希格式不对：应为 0x 开头、共 66 位的字符串。", "err");
-    var btn = $("submitBtn"); btn.disabled = true; btn.textContent = "正在核对交易…"; msg("");
-    checkTx(tx).then(function (chk) {
-      if (chk.status === "failed") throw { user: "这笔交易在链上显示失败，请确认转账成功后再提交。" };
-      if (chk.status === "mismatch") throw { user: "这笔交易里没有找到转入本店地址的 USDT（BEP20）。请检查网络、币种和交易哈希是否正确。" };
+
+    var btn = $("submitBtn");
+    function send(order, extra) {
       btn.textContent = "正在提交…";
-      var id = orderId();
-      var order = { id: id, email: email, tx: tx, note: note, priceCny: C.priceCny, quotedUsdt: state.usdt,
-        rate: state.rate, rateSource: state.rateSource, precheck: chk, createdAt: new Date().toISOString() };
       return encrypt(order).then(function (body) {
         return withTimeout(fetch(C.orderEndpoint, { method: "POST", body: body }), 10000);
       }).then(function (r) {
         if (!r.ok) throw new Error("HTTP " + r.status);
-        var extra = chk.status === "found"
-          ? (chk.paid + 1e-9 >= Number(state.usdt) * 0.98 ? "链上已查到你的转账（" + chk.paid + " USDT）。" : "链上查到转账 " + chk.paid + " USDT，少于应付金额，可能需要补差额。")
-          : "交易暂未在链上查到，可能仍在确认中，我们会再次核对。";
-        msg("<b>✓ 订单已提交</b><br>订单号：<b>" + esc(id) + "</b>（请截图保存）<br>" + esc(extra) + "<br>确认到账后，教程会发送到 <b>" + esc(email) + "</b>，一般 24 小时内。", "ok");
+        msg("<b>✓ 订单已提交</b><br>订单号：<b>" + esc(order.id) + "</b>（请截图保存）<br>" + extra + "<br>确认到账后，教程会发送到 <b>" + esc(email) + "</b>，一般 24 小时内。", "ok");
         $("orderForm").reset();
+        setMethod(state.method);
       });
+    }
+
+    if (method === "alipay") {
+      var info = $("alipayInfo").value.trim();
+      if (info.length < 2) return msg("请填写支付宝昵称或订单号后几位，方便核对到账。", "err");
+      btn.disabled = true; btn.textContent = "正在提交…"; msg("");
+      var idA = orderId();
+      var orderA = {
+        id: idA, method: "alipay", email: email, alipayInfo: info, note: note,
+        priceCny: C.priceCny, quotedUsdt: null, tx: null,
+        rate: null, rateSource: null, precheck: { status: "manual" },
+        createdAt: new Date().toISOString()
+      };
+      send(orderA, "支付方式：支付宝。我们会按你填写的付款信息人工核对 ¥9.99 到账。")
+        .catch(function () { msg("提交失败，请检查网络后重试。", "err"); })
+        .then(function () { btn.disabled = false; btn.textContent = "提交订单"; });
+      return;
+    }
+
+    var tx = $("tx").value.trim().toLowerCase();
+    if (!/^0x[0-9a-f]{64}$/.test(tx)) return msg("交易哈希格式不对：应为 0x 开头、共 66 位的字符串。", "err");
+    btn.disabled = true; btn.textContent = "正在核对交易…"; msg("");
+    checkTx(tx).then(function (chk) {
+      if (chk.status === "failed") throw { user: "这笔交易在链上显示失败，请确认转账成功后再提交。" };
+      if (chk.status === "mismatch") throw { user: "这笔交易里没有找到转入本店地址的 USDT（BEP20）。请检查网络、币种和交易哈希是否正确。" };
+      var id = orderId();
+      var order = { id: id, method: "usdt", email: email, tx: tx, note: note, priceCny: C.priceCny, quotedUsdt: state.usdt,
+        rate: state.rate, rateSource: state.rateSource, precheck: chk, createdAt: new Date().toISOString() };
+      var extra = chk.status === "found"
+        ? (chk.paid + 1e-9 >= Number(state.usdt) * 0.98 ? "链上已查到你的转账（" + chk.paid + " USDT）。" : "链上查到转账 " + chk.paid + " USDT，少于应付金额，可能需要补差额。")
+        : "交易暂未在链上查到，可能仍在确认中，我们会再次核对。";
+      return send(order, esc(extra));
     }).catch(function (err) {
       msg(err && err.user ? esc(err.user) : "提交失败，请检查网络后重试。", "err");
     }).then(function () { btn.disabled = false; btn.textContent = "提交订单"; });
