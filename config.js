@@ -1,6 +1,10 @@
 // 公开配置（不含任何密钥）。订单内容在浏览器端用公钥加密后发送，只有店主的私有仓库能解密。
 window.SHOP_CONFIG = {
-  priceCny: 9.99,
+  products: [
+    { id: "muse-1b", name: "Muse 1B", priceCny: 9.99 },
+    { id: "muse-31b", name: "Muse 31B", priceCny: 39.99 }
+  ],
+  defaultProduct: "muse-1b",
   fallbackRate: 6.67,          // 1 USDT ≈ ? CNY，实时汇率获取失败时使用
   address: "0x7009219ea689a101aaf6a8e8284f83d5a688d0c8",
   usdtContract: "0x55d398326f99059fF775485246999027B3197955", // BSC-USD (BEP20), 18 decimals

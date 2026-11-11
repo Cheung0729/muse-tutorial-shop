@@ -96,3 +96,14 @@ form label.agree{display:flex;align-items:center;gap:8px;margin:6px 0 0;font-wei
 .modal-actions{display:flex;gap:10px;justify-content:flex-end}
 .modal-actions .btn{flex:1}
 body.noscroll{overflow:hidden}
+
+/* 商品选择 */
+.products{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 8px}
+.product{appearance:none;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;border-radius:14px;padding:14px 16px;text-align:left;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;gap:2px}
+.product:hover{background:rgba(255,255,255,.2)}
+.product.active{background:#fff;color:var(--ink);border-color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.product-name{font-weight:800;font-size:18px}
+.product-price{font-weight:800;font-size:24px;line-height:1.2}
+.product.active .product-price{color:var(--brand)}
+.pick-note{font-weight:700;margin:0 0 14px;font-size:15px}
+@media(max-width:420px){.product{padding:12px}.product-name{font-size:16px}.product-price{font-size:20px}}

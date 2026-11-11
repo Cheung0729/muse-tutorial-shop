@@ -2,7 +2,24 @@
   "use strict";
   var C = window.SHOP_CONFIG, I = window.I18N, L = window.MuseLookup, t = I.t;
   var $ = function (id) { return document.getElementById(id); };
-  var state = { rate: C.fallbackRate, usdt: null, rateSource: "fallback", method: "alipay", agreed: false, pending: null };
+  var state = { rate: C.fallbackRate, usdt: null, rateSource: "fallback", method: "alipay", agreed: false, pending: null, productId: C.defaultProduct };
+  function productById(id) {
+    var list = C.products || [];
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return list[0];
+  }
+  function currentProduct() { return productById(state.productId); }
+  function setProduct(id) {
+    var p = productById(id);
+    if (!p) return;
+    state.productId = p.id;
+    Array.prototype.forEach.call(document.querySelectorAll(".product"), function (btn) {
+      var on = btn.getAttribute("data-product") === p.id;
+      btn.classList.toggle("active", on);
+      btn.setAttribute("aria-checked", on ? "true" : "false");
+    });
+    render();
+  }
   var RECENT_KEY = "museOrders";
 
   $("yr").textContent = new Date().getFullYear();
@@ -75,12 +92,17 @@
   function sane(r) { return typeof r === "number" && r > 4 && r < 12; }
   var rateLoaded = false;
   function render() {
-    var usdt = Math.ceil((C.priceCny / state.rate) * 100 - 1e-9) / 100;
+    var p = currentProduct();
+    var price = p.priceCny;
+    var usdt = Math.ceil((price / state.rate) * 100 - 1e-9) / 100;
     state.usdt = usdt.toFixed(2);
     $("usdt").textContent = state.usdt;
     Array.prototype.forEach.call(document.querySelectorAll(".amt-inline"), function (el) { el.textContent = state.usdt; });
+    Array.prototype.forEach.call(document.querySelectorAll(".price-cny"), function (el) { el.textContent = "¥" + price; });
+    Array.prototype.forEach.call(document.querySelectorAll(".product-label"), function (el) { el.textContent = p.name; });
+    if ($("pickNote")) $("pickNote").textContent = t("buy.selected", { name: p.name, price: price });
     $("rateNote").textContent = rateLoaded
-      ? t("rate.note", { price: C.priceCny, rate: state.rate.toFixed(4), src: t("rate." + state.rateSource) })
+      ? t("rate.note", { price: price, rate: state.rate.toFixed(4), src: t("rate." + state.rateSource) })
       : t("usdt.rateLoading");
   }
   onLang(render);
@@ -185,7 +207,8 @@
   }
   function renderConfirm() {
     var o = state.pending; if (!o) return;
-    var rows = [[t("cf.method"), methodName(o.method)],
+    var rows = [[t("cf.product"), o.productName || ""],
+      [t("cf.method"), methodName(o.method)],
       [t("cf.amount"), o.method === "alipay" ? "¥" + o.priceCny : o.quotedUsdt + " USDT (≈ ¥" + o.priceCny + ")"],
       [t("cf.email"), o.email]];
     if (o.method === "alipay") rows.push([t("cf.ali"), o.alipayInfo]);
@@ -206,6 +229,7 @@
     var line = function (k, v) { return zh[k] + " " + en[k] + ": " + v; };
     return [zh["cred.title"], en["cred.title"], "",
       line("cred.id", r.id), line("cred.code", r.code),
+      line("cred.product", r.productName || ""),
       line("cred.method", (r.method === "alipay" ? zh["m.alipay"] + " / " + en["m.alipay"] : "USDT (BEP20)")),
       line("cred.amount", r.method === "alipay" ? "¥" + r.priceCny : r.quotedUsdt + " USDT (≈ ¥" + r.priceCny + ")"),
       line("cred.time", new Date(r.createdAt).toLocaleString("zh-CN", { timeZone: "Asia/Shanghai", hour12: false }) + " (北京时间 Beijing time)"),
@@ -234,7 +258,7 @@
     if (!a.length) { el.innerHTML = '<p class="muted small">' + esc(t("lk.recentEmpty")) + "</p>"; return; }
     el.innerHTML = a.map(function (r, i) {
       var st = recentStatus[r.id];
-      return '<div class="recent-item"><div class="ri-main"><b>' + esc(r.id) + '</b><span class="muted small">' + esc(methodName(r.method)) + " · " + esc(fmtTime(r.createdAt)) + "</span>" +
+      return '<div class="recent-item"><div class="ri-main"><b>' + esc(r.id) + '</b><span class="muted small">' + esc((r.productName ? r.productName + " · " : "") + methodName(r.method)) + " · " + esc(fmtTime(r.createdAt)) + "</span>" +
         (st ? '<span class="ri-status st-' + esc(st.kind === "found" ? st.status : st.kind) + '">' + esc(statusLine(st)) + "</span>" : "") +
         '</div><div class="ri-actions"><button type="button" class="btn small" data-act="check" data-i="' + i + '">' + esc(t("lk.check")) + '</button>' +
         '<button type="button" class="btn small ghost" data-act="dl" data-i="' + i + '" title="' + esc(t("ok.download")) + '">⬇︎</button>' +
@@ -287,12 +311,12 @@
       return withTimeout(fetch(C.orderEndpoint, { method: "POST", body: body }), 10000);
     }).then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
-      var rec = { id: o.id, code: o.queryCode, method: o.method, priceCny: o.priceCny, quotedUsdt: o.quotedUsdt, createdAt: o.createdAt };
+      var rec = { id: o.id, code: o.queryCode, method: o.method, productId: o.productId, productName: o.productName, priceCny: o.priceCny, quotedUsdt: o.quotedUsdt, createdAt: o.createdAt };
       addRecent(rec);
       download(rec);
       $("orderForm").reset(); state.agreed = false;
       setMethod(o.method); // 会清空提示，所以放在显示成功信息之前
-      var email = o.email, extra = o.method === "alipay" ? function () { return esc(t("ok.ali")); } : function () { return esc(chkText(o)); };
+      var email = o.email, extra = o.method === "alipay" ? function () { return esc(t("ok.ali", { price: o.priceCny })); } : function () { return esc(chkText(o)); };
       msg(function () {
         return "<b>" + esc(t("ok.title")) + "</b>" +
           '<div class="cred"><div>' + esc(t("ok.id")) + colon() + "<b>" + esc(o.id) + "</b></div><div>" + esc(t("ok.code")) + colon() + "<b class=\"mono\">" + esc(o.queryCode) + "</b></div></div>" +
@@ -318,7 +342,8 @@
     var email = $("email").value.trim(), note = $("note").value.trim(), method = state.method;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return msgKey("err.email", "err");
     if (!state.agreed || waitLeft > 0) return msgKey("err.agree", "err");
-    var base = { id: orderId(), queryCode: L.newCode(10), email: email, note: note, priceCny: C.priceCny, createdAt: new Date().toISOString() };
+    var prod = currentProduct();
+    var base = { id: orderId(), queryCode: L.newCode(10), email: email, note: note, productId: prod.id, productName: prod.name, priceCny: prod.priceCny, createdAt: new Date().toISOString() };
 
     if (method === "alipay") {
       var info = $("alipayInfo").value.trim();
@@ -344,6 +369,10 @@
 
   // ---------- 启动 ----------
   I.apply();
+  Array.prototype.forEach.call(document.querySelectorAll(".product"), function (btn) {
+    btn.addEventListener("click", function () { setProduct(btn.getAttribute("data-product")); });
+  });
+  setProduct(state.productId || C.defaultProduct);
   setMethod("alipay");
   render(); renderAgree(); renderRecent();
   if (!qrOk) $("qr").textContent = t("usdt.qrFail");

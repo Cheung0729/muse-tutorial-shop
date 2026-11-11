@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Muse 注册教程 · ¥9.99</title>
-<meta name="description" content="一份图文并茂的 Muse 注册教程，手把手带你完成注册。支持支付宝与 USDT (BEP20) 付款，邮箱发货。">
+<title>Muse 注册教程 · Muse 1B / Muse 31B</title>
+<meta name="description" content="Muse 1B 与 Muse 31B 注册教程，图文步骤，支持支付宝与 USDT (BEP20) 付款，邮箱发货。">
 <link rel="stylesheet" href="style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📘</text></svg>">
 </head>
@@ -29,19 +29,30 @@
         <li data-i18n="hero.p2">✅ 注册中常见问题的处理思路</li>
         <li data-i18n="hero.p3">✅ 注册完成后的基础设置建议</li>
       </ul>
-      <div class="price-row"><span class="price">¥9.99</span><span class="muted" data-i18n="hero.priceNote">数字教程 · 邮箱发送</span></div>
+      <div class="products" id="products" role="radiogroup" aria-label="选择商品" data-i18n-aria="hero.pick">
+        <button type="button" class="product active" data-product="muse-1b" role="radio" aria-checked="true">
+          <span class="product-name">Muse 1B</span>
+          <span class="product-price">¥9.99</span>
+        </button>
+        <button type="button" class="product" data-product="muse-31b" role="radio" aria-checked="false">
+          <span class="product-name">Muse 31B</span>
+          <span class="product-price">¥39.99</span>
+        </button>
+      </div>
+      <p class="muted" data-i18n="hero.priceNote">数字教程 · 邮箱发送</p>
     </div>
   </section>
 
   <section id="buy" class="card">
     <h2 data-i18n="buy.title">购买步骤</h2>
+    <p class="pick-note" id="pickNote">当前商品：Muse 1B · ¥9.99</p>
     <ol class="steps" id="stepsUsdt">
       <li data-i18n-html="usdt.s1"><b>转账</b>：用支持 BNB Smart Chain 的钱包，向下方地址转入 <b class="amt-inline">…</b> USDT（BEP20）。</li>
       <li data-i18n-html="usdt.s2"><b>提交订单</b>：填写你的邮箱和转账的交易哈希（Tx Hash）。</li>
       <li data-i18n-html="usdt.s3"><b>收货</b>：确认到账后，教程会发送到你的邮箱。</li>
     </ol>
     <ol class="steps hidden" id="stepsAlipay">
-      <li data-i18n-html="ali.s1"><b>扫码付款</b>：用支付宝扫描下方二维码，支付 <b>¥9.99</b>。</li>
+      <li data-i18n-html="ali.s1"><b>扫码付款</b>：用支付宝扫描下方二维码，支付 <b class="price-cny">¥9.99</b>。</li>
       <li data-i18n-html="ali.s2"><b>提交订单</b>：填写你的邮箱，并备注付款人昵称或支付宝订单号后几位，方便核对。</li>
       <li data-i18n-html="ali.s3"><b>收货</b>：确认到账后，教程会发送到你的邮箱。</li>
     </ol>
@@ -53,11 +64,11 @@
 
     <div id="payAlipay" class="pay-panel">
       <div class="alipay-box">
-        <div class="net"><span class="chip alipay" data-i18n="chip.alipay">支付宝</span><span class="chip">¥9.99</span><span class="chip" data-i18n="chip.shop">666商店</span></div>
+        <div class="net"><span class="chip alipay" data-i18n="chip.alipay">支付宝</span><span class="chip product-label">Muse 1B</span><span class="chip price-cny">¥9.99</span><span class="chip" data-i18n="chip.shop">666商店</span></div>
         <img class="alipay-qr" src="assets/alipay-qr.jpg" alt="支付宝收款二维码 · 666商店" data-i18n-alt="ali.qrAlt" width="320" height="315">
-        <p class="muted small" data-i18n-html="ali.hint">请用支付宝扫一扫支付 <b>¥9.99</b>。付款后回到本页提交订单。</p>
+        <p class="muted small" data-i18n-html="ali.hint">请用支付宝扫一扫支付 <b class="price-cny">¥9.99</b>。付款后回到本页提交订单。</p>
       </div>
-      <div class="warn" data-i18n-html="ali.warn">⚠️ 请按金额 <b>¥9.99</b> 付款。提交订单时请填写支付宝昵称或订单号后几位，方便我们核对到账。</div>
+      <div class="warn" data-i18n-html="ali.warn">⚠️ 请按金额 <b class="price-cny">¥9.99</b> 付款。提交订单时请填写支付宝昵称或订单号后几位，方便我们核对到账。</div>
     </div>
 
     <div id="payUsdt" class="pay-panel hidden">
